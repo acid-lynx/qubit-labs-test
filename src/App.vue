@@ -1,24 +1,31 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { useStore } from "@/store";
+import { onMounted } from "vue";
+import NavHeader from "@/components/features/NavHeader.vue";
+import HorseList from "@/components/features/HorseList.vue";
+import RaceTrack from "@/components/features/RaceTrack.vue";
+import Sidebar from "@/components/features/Sidebar.vue";
+
+const store = useStore();
+
+onMounted(() => {
+  store.dispatch('race/generateProgram');
+});
 </script>
 
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome to Vue 3 + TypeScript + Vuex" />
+    <NavHeader />
+    <main class="container">
+      <HorseList />
+      <RaceTrack />
+      <Sidebar />
+    </main>
   </div>
 </template>
 
 <style>
-#app {
-  font-family:
-    Avenir,
-    Helvetica,
-    Arial,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.container {
+  display: flex;
 }
 </style>
