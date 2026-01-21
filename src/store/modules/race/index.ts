@@ -17,7 +17,7 @@ import { Mutations, Getters, Actions } from '../../types.ts';
 
 type RaceContext = ActionContext<RaceState, RootState>;
 
-const index: Module<RaceState, RootState> = {
+export const raceModule: Module<RaceState, RootState> = {
   namespaced: true,
 
   state: (): RaceState => ({
@@ -122,5 +122,3 @@ const index: Module<RaceState, RootState> = {
     },
   },
 };
-
-export default index;

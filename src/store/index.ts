@@ -3,8 +3,8 @@ import { createStore, useStore as baseUseStore, Store } from 'vuex';
 import type { InjectionKey } from 'vue';
 
 // store modules
-import horses from './modules/horses';
-import race from './modules/race';
+import { horsesModule } from './modules/horses';
+import { raceModule } from './modules/race';
 
 // types
 import type { HorsesState } from './modules/horses/horsesTypes';
@@ -23,7 +23,7 @@ export function useStore(): Store<RootState> {
 
 export default createStore<RootState>({
   modules: {
-    horses,
-    race,
+    horses: horsesModule,
+    race: raceModule,
   },
 });

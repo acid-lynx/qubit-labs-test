@@ -11,7 +11,7 @@ import { Mutations, Getters, Actions } from '../../types.ts';
 
 type HorsesContext = ActionContext<HorsesState, RootState>;
 
-const index: Module<HorsesState, RootState> = {
+export const horsesModule: Module<HorsesState, RootState> = {
   namespaced: true,
 
   state: (): HorsesState => ({
@@ -43,5 +43,3 @@ const index: Module<HorsesState, RootState> = {
     },
   },
 };
-
-export default index;
