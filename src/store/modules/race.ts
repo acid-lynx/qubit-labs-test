@@ -12,6 +12,7 @@ import {
   calculateDistanceFactor,
   simulateRaceTick,
 } from '@/utils/services';
+import { Mutations, Getters, Actions } from '../types';
 
 type RaceContext = ActionContext<RaceState, RootState>;
 
@@ -25,30 +26,30 @@ const race: Module<RaceState, RootState> = {
   }),
 
   getters: {
-    isStartDisabled: (state: RaceState): boolean =>
+    [Getters.IS_START_DISABLED]: (state: RaceState): boolean =>
       state.isRacing ||
       (state.currentRoundIndex === state.rounds.length - 1 &&
         state.rounds[state.currentRoundIndex]?.horsesPerRound?.every(
           (h: RaceHorse) => h.finished
         )),
-    getCurrentRound: (state: RaceState): Round | undefined =>
+    [Getters.GET_CURRENT_ROUND]: (state: RaceState): Round | undefined =>
       state.rounds[state.currentRoundIndex],
   },
 
   mutations: {
-    SET_ROUNDS(state: RaceState, rounds: Round[]) {
+    [Mutations.SET_ROUNDS](state: RaceState, rounds: Round[]) {
       state.rounds = rounds;
     },
-    SET_CURRENT_ROUND(state: RaceState, roundIndex: number) {
+    [Mutations.SET_CURRENT_ROUND](state: RaceState, roundIndex: number) {
       state.currentRoundIndex = roundIndex;
     },
-    SET_ROUND_RESULT(
+    [Mutations.SET_ROUND_RESULT](
       state: RaceState,
       { roundIndex, result }: { roundIndex: number; result: RaceResult[] }
     ) {
       state.rounds[roundIndex].results = result;
     },
-    SET_ROUND_PROGRESS(
+    [Mutations.SET_ROUND_PROGRESS](
       state: RaceState,
       {
         roundIndex,
@@ -57,20 +58,20 @@ const race: Module<RaceState, RootState> = {
     ) {
       state.rounds[roundIndex].horsesPerRound = updatedHorses;
     },
-    SET_IS_RACING(state: RaceState, isRacing: boolean) {
+    [Mutations.SET_IS_RACING](state: RaceState, isRacing: boolean) {
       state.isRacing = isRacing;
     },
   },
 
   actions: {
-    generateProgram({ dispatch, commit }: RaceContext) {
-      dispatch('horses/generateHorses', null, { root: true });
-      dispatch('generateRounds');
-      commit('SET_CURRENT_ROUND', 0);
-      commit('SET_IS_RACING', false);
+    [Actions.GENERATE_PROGRAM]({ dispatch, commit }: RaceContext) {
+      dispatch(`horses/${Actions.GENERATE_HORSES}`, null, { root: true });
+      dispatch(Actions.GENERATE_ROUNDS);
+      commit(Mutations.SET_CURRENT_ROUND, 0);
+      commit(Mutations.SET_IS_RACING, false);
     },
 
-    generateRounds({ commit, rootState }: RaceContext) {
+    [Actions.GENERATE_ROUNDS]({ commit, rootState }: RaceContext) {
       const rounds: Round[] = RACE_DISTANCES.map((distance, index) => {
         const selectedHorses: RaceHorse[] = [...rootState.horses.horsesList]
           .sort(() => 0.5 - Math.random())
@@ -91,13 +92,13 @@ const race: Module<RaceState, RootState> = {
         };
       });
 
-      commit('SET_ROUNDS', rounds);
+      commit(Mutations.SET_ROUNDS, rounds);
     },
 
-    startRace({ commit, state }: RaceContext, roundIndex: number) {
+    [Actions.START_RACE]({ commit, state }: RaceContext, roundIndex: number) {
       if (!state.rounds[roundIndex] || state.isRacing) return;
 
-      commit('SET_IS_RACING', true);
+      commit(Mutations.SET_IS_RACING, true);
 
       const round = state.rounds[roundIndex];
       const distanceFactor = calculateDistanceFactor(round.distance);
@@ -106,14 +107,14 @@ const race: Module<RaceState, RootState> = {
         const { updatedHorses, updatedResults, isRaceFinished } =
           simulateRaceTick(round.horsesPerRound, round.results, distanceFactor);
 
-        commit('SET_ROUND_PROGRESS', { roundIndex, updatedHorses });
-        commit('SET_ROUND_RESULT', { roundIndex, result: updatedResults });
+        commit(Mutations.SET_ROUND_PROGRESS, { roundIndex, updatedHorses });
+        commit(Mutations.SET_ROUND_RESULT, { roundIndex, result: updatedResults });
 
         if (isRaceFinished) {
           if (roundIndex + 1 < state.rounds.length) {
-            commit('SET_CURRENT_ROUND', roundIndex + 1);
+            commit(Mutations.SET_CURRENT_ROUND, roundIndex + 1);
           }
-          commit('SET_IS_RACING', false);
+          commit(Mutations.SET_IS_RACING, false);
           clearInterval(timer);
         }
       }, 100);

@@ -3,13 +3,14 @@ import { computed } from 'vue';
 import { useStore } from '@/store';
 import type { Round } from '@/utils/types';
 import HorseIcon from '@/components/shared/HorseIcon.vue';
+import { Getters } from '@/store/types';
 
 const store = useStore();
 
 const rounds = computed(() => store.state.race.rounds);
 const currentRoundIndex = computed(() => store.state.race.currentRoundIndex);
 const getCurrentRound = computed(
-  () => store.getters['race/getCurrentRound'] as Round | undefined
+  () => store.getters[`race/${Getters.GET_CURRENT_ROUND}`] as Round | undefined
 );
 </script>
 

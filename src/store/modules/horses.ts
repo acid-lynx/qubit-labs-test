@@ -7,6 +7,7 @@ import {
   generateCondition,
   generateHorseName,
 } from '@/utils/constants';
+import { Mutations, Getters, Actions } from '../types';
 
 type HorsesContext = ActionContext<HorsesState, RootState>;
 
@@ -18,17 +19,17 @@ const horses: Module<HorsesState, RootState> = {
   }),
 
   getters: {
-    horsesList: (state: HorsesState) => state.horsesList,
+    [Getters.HORSES_LIST]: (state: HorsesState) => state.horsesList,
   },
 
   mutations: {
-    SET_HORSES(state: HorsesState, horses: Horse[]) {
+    [Mutations.SET_HORSES](state: HorsesState, horses: Horse[]) {
       state.horsesList = horses;
     },
   },
 
   actions: {
-    generateHorses({ commit }: HorsesContext) {
+    [Actions.GENERATE_HORSES]({ commit }: HorsesContext) {
       const horses: Horse[] = Array.from(
         { length: TOTAL_HORSES },
         (_, index) => ({
@@ -38,7 +39,7 @@ const horses: Module<HorsesState, RootState> = {
           condition: generateCondition(),
         })
       );
-      commit('SET_HORSES', horses);
+      commit(Mutations.SET_HORSES, horses);
     },
   },
 };

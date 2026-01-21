@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useStore } from '@/store';
+import { Getters, Actions } from '@/store/types';
 
 const store = useStore();
 
 const currentRoundIndex = computed(() => store.state.race.currentRoundIndex);
 const isRacing = computed(() => store.state.race.isRacing);
 const isStartDisabled = computed(
-  () => store.getters['race/isStartDisabled'] as boolean
+  () => store.getters[`race/${Getters.IS_START_DISABLED}`] as boolean
 );
 
 const generateProgram = (): void => {
-  store.dispatch('race/generateProgram');
+  store.dispatch(`race/${Actions.GENERATE_PROGRAM}`);
 };
 const startRace = (roundIndex: number): void => {
-  store.dispatch('race/startRace', roundIndex);
+  store.dispatch(`race/${Actions.START_RACE}`, roundIndex);
 };
 </script>
 
